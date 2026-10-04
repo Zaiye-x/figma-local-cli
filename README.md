@@ -2,6 +2,10 @@
 
 让本地 Agent 通过 Figma 开发插件操作当前文件，并把页面结构、变量、组件资料和预览交给前端 Agent。
 
+<p align="center">
+  <img src="docs/images/overview.svg" width="100%" alt="Figma Local CLI 工作流程：本地 Agent 经过本机桥接连接 Figma 插件，再导出版本化交接包">
+</p>
+
 **适用：macOS + Node.js 22+ + Figma 桌面端 + 有编辑权限的个人草稿。主路径不需要 PAT，不调用官方 MCP，不消耗 MCP 读取额度。**
 
 当前 Release：**`v0.1.0`**。已在真实 Free 工作区的个人草稿跑通闭环：创建原生页面、组件、实例、变量和可点击原型，读回结构，提取设计资产，再在本地实现并验收前端。当前源码的构建、27 项自动测试和插件模拟 host 浏览器回归均通过。
@@ -34,6 +38,12 @@ figma-local-cli serve
 3. 启动 **Figma Local CLI** 插件。
 4. 在另一个终端运行 `figma-local-cli pair --copy`。
 5. 将剪贴板内容粘贴到插件并连接当前文件。
+
+| 1. 粘贴 CLI 复制的连接码 | 2. 确认插件已连接 |
+|---|---|
+| <img src="docs/images/plugin-disconnected.png" width="340" alt="Figma Local CLI 插件等待粘贴本地连接码"> | <img src="docs/images/plugin-connected.png" width="340" alt="Figma Local CLI 插件已经连接到本地 Agent"> |
+
+> 上图来自模拟 Figma host 的插件 UI 回归，用于说明操作位置；真实账号接入证据见下方“第一次真实账号验证”。
 
 连接后执行：
 
@@ -80,6 +90,10 @@ figma-local-cli inspect
 
 先核对 `sessions` 中的文件名。示例只新建一个独立 Section、两个 Frame、一个按钮组件及实例、两项变量和点击跳转，不删除已有图层：
 
+<p align="center">
+  <img src="docs/images/free-workspace.jpg" width="900" alt="Figma Free 工作区中的真实个人草稿验证文件">
+</p>
+
 ```sh
 node src/cli.js eval examples/smoke.js
 ```
@@ -93,6 +107,10 @@ node src/cli.js handoff --out artifacts/smoke-handoff
 ```
 
 示例会选中两屏和按钮组件，因此无参数 `handoff` 会读取这些选区。对照 `snapshot.json` 中的 `INSTANCE`、`mainComponent`、`boundVariables` 和 `reactions`，确认导出是原生结构。只有这一步在真实 Figma 成功，才能认定这个账号已接通。示例不是业务产品设计。
+
+| Prototype 起点 | 点击后的完成态 |
+|---|---|
+| <img src="docs/images/prototype-start.jpg" width="560" alt="真实 Figma Prototype 的起始画面"> | <img src="docs/images/prototype-complete.jpg" width="560" alt="真实 Figma Prototype 点击后的完成画面"> |
 
 `eval` 的输入是**异步函数体**，可以使用 `figma`、`context`、`await` 和 `return`；不支持 Node 的文件/网络模块、`import` 或 `require`：
 
@@ -162,6 +180,10 @@ python3 -m http.server 3913 --bind 127.0.0.1 --directory artifacts/real-20261004
 ```
 
 打开 `http://127.0.0.1:3913`。复现构建过程见 [前端示例说明](examples/frontend-smoke/README.md)；该示例只实现 `smoke.js` 的两屏流程，不是通用业务代码生成器。
+
+| Figma 原生 Frame | 浏览器起点 | 浏览器完成态 |
+|---|---|---|
+| <img src="docs/images/figma-frame.png" width="280" alt="从真实 Figma 导出的原生 Frame 预览"> | <img src="docs/images/web-start.png" width="280" alt="根据交接包实现的浏览器起点"> | <img src="docs/images/web-complete.png" width="280" alt="根据交接包实现的浏览器完成态"> |
 
 ```sh
 # 选中已认可的代表页面，或通过 --node 指定根节点
