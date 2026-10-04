@@ -1,0 +1,35 @@
+{
+  "scope": {
+    "rootIds": [
+      "2:6",
+      "2:7",
+      "2:12"
+    ],
+    "variableScope": "all-local-file",
+    "componentScope": "selected-subtrees-and-instance-references"
+  },
+  "components": [
+    {
+      "id": "2:12",
+      "key": "d215148090fb1f2f0377d49982779e52a89f859e",
+      "name": "Button / Primary · d239ffc0",
+      "remote": false,
+      "componentSetId": null,
+      "type": "COMPONENT",
+      "status": "mapped-local-example",
+      "code": {
+        "file": "index.html",
+        "export": "primaryButton (build.mjs)",
+        "framework": "HTML",
+        "usage": "CLI smoke only; ON_CLICK → hash navigation; native link, visible keyboard focus.",
+        "officialCodeConnect": false
+      },
+      "referenceOnly": false,
+      "instanceIds": [
+        "2:14"
+      ],
+      "variantProperties": null,
+      "properties": {}
+    }
+  ]
+}

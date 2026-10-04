@@ -1,0 +1,42 @@
+{
+  "node": "v24.20.0",
+  "manifest": "/Users/bytedance/Desktop/byte-project/figma-local-cli/dist/plugin/manifest.json",
+  "pluginBuilt": true,
+  "figmaInCommonPaths": true,
+  "bridge": true,
+  "verificationRecord": "/Users/bytedance/Desktop/byte-project/figma-local-cli/docs/verification.md",
+  "binding": {
+    "instanceId": "65a4b9e1-156c-478c-877a-2cb40c6b82e2",
+    "sessionId": "plugin-mutmk86w-cfoo1j4ch8w-kq1jf8kbyv",
+    "pageId": "0:1"
+  },
+  "sessions": [
+    {
+      "sessionId": "plugin-mutmk86w-cfoo1j4ch8w-kq1jf8kbyv",
+      "fileName": "Untitled",
+      "pageId": "0:1",
+      "pageName": "Page 1",
+      "selection": [
+        {
+          "id": "2:6",
+          "name": "01 · Start",
+          "type": "FRAME"
+        },
+        {
+          "id": "2:7",
+          "name": "02 · Complete",
+          "type": "FRAME"
+        },
+        {
+          "id": "2:12",
+          "name": "Button / Primary · d239ffc0",
+          "type": "COMPONENT"
+        }
+      ],
+      "online": true,
+      "lastSeen": 1791106580893,
+      "busyJobId": null
+    }
+  ],
+  "verificationNote": "doctor 只检查当前环境与连接。真实创建/读回/截图的验收证据见 verificationRecord；不自动推断当前文件已验收。"
+}

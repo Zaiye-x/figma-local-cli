@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Figma → Web · CLI smoke</title>
+<link rel="stylesheet" href="tokens.css">
+<style>
+@font-face{font-family:Inter;src:url("InterVariable.woff2") format("woff2");font-weight:100 900;font-display:swap}
+*{box-sizing:border-box}body{margin:0;min-height:100svh;display:grid;place-items:center;background:#f5f5f5;font-family:Inter,system-ui,sans-serif}
+.screen{width:min(360px,100%);min-height:420px;background:rgb(247.35000729560852 249.900004863739 255 / 1);
+border-radius:16px;padding:24px 24px 24px calc(var(--c-cli-smoke-d239ffc0-60146fc5d76a--t-space-content-fac152604470) * 1px);
+display:flex;flex-direction:column;align-items:flex-start;gap:20px}
+[hidden]{display:none!important}
+h1,p{margin:0;max-width:100%;overflow-wrap:break-word}
+h1{font-size:26px;line-height:31px;font-weight:600;outline:none}
+p{font-size:16px;line-height:19px;font-weight:400}
+.primary-button{display:inline-flex;align-items:center;justify-content:center;padding:12px 20px;
+border-radius:8px;background:var(--c-cli-smoke-d239ffc0-60146fc5d76a--t-color-action-e22239b9a3c7);color:rgb(255 255 255 / 1);
+font-size:15px;line-height:18px;font-weight:600;text-decoration:none}
+.primary-button:focus-visible{outline:3px solid #111;outline-offset:4px}
+.primary-button:hover{filter:brightness(.94)}.primary-button:active{transform:translateY(1px)}
+@media(pointer:coarse){.primary-button{min-height:44px}}
+@media(max-width:359px){.screen{border-radius:0}}
+</style></head><body>
+<section class="screen" id="start" data-node-id="2:6" >
+    <h1 tabindex="-1">Local Agent → Figma</h1>
+    <p>Native layers. Reusable assets.</p>
+    <a class="primary-button" data-component-id="2:12"
+  data-node-id="2:14" href="#complete">Continue</a>
+  </section>
+<section class="screen" id="complete" data-node-id="2:7" hidden>
+    <h1 tabindex="-1">Ready for handoff</h1>
+    <p>Inspect structure and export tokens.</p>
+    
+  </section>
+<script>
+function show(focus) {
+  const state = location.hash === '#complete' ? 'complete' : 'start';
+  document.querySelectorAll('.screen').forEach(node => { node.hidden = node.id !== state; });
+  if (focus) document.querySelector('#' + state + ' h1').focus();
+}
+window.addEventListener('hashchange', () => show(true));
+show(false);
+</script></body></html>

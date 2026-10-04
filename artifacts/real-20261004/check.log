@@ -1,0 +1,32 @@
+
+> figma-local-cli@0.1.0 check
+> npm run build && npm test
+
+
+> figma-local-cli@0.1.0 build
+> tsc --noEmit && node scripts/build.mjs
+
+Built dist/plugin/manifest.json
+
+> figma-local-cli@0.1.0 test
+> node --test test/*.test.js
+
+✔ DTCG colors, alpha, mode aliases, cross-collection refs and non-DTCG values (1.479291ms)
+✔ unknown and cyclic variable aliases fail loudly (0.713792ms)
+✔ candidate values exclude explicitly bound properties; component refs stay unmapped (0.208584ms)
+✔ asset package retains mixed text/truncation, has entry point and refuses overwrite (7.4815ms)
+✔ auth, Origin, Host and role separation (25.988583ms)
+✔ bind, job dispatch, no replay, acknowledgement and result (21.821833ms)
+✔ offline and page change reject submissions; queued jobs recheck target (13.298834ms)
+✔ queued timeout never executes; running timeout stays unknown and blocks more work (26.481209ms)
+✔ job/request budgets are enforced (7.046708ms)
+✔ actual serializer preserves mixed properties, segments, instance refs and budget markers (11.078583ms)
+✔ built plugin rejects a changed page, returns errors and never repeats a script (1.376375ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 11
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 141.209792

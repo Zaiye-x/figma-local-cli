@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "warnings": [],
+  "tokens": [
+    {
+      "variableId": "VariableID:2:3",
+      "key": "c37b3dd8d4a8c5e30a0124f468d42a5802af7085",
+      "name": "color/action",
+      "collectionId": "VariableCollectionId:2:2",
+      "collectionName": "CLI Smoke d239ffc0",
+      "modeId": "2:0",
+      "modeName": "Mode 1",
+      "tokenPath": "c_cli-smoke-d239ffc0_60146fc5d76a.m_e6b190f6cd6f.t_color-action_e22239b9a3c7",
+      "cssName": "--c-cli-smoke-d239ffc0-60146fc5d76a--t-color-action-e22239b9a3c7",
+      "type": "COLOR",
+      "status": "supported",
+      "originalValue": {
+        "r": 0.07999999821186066,
+        "g": 0.3799999952316284,
+        "b": 0.9200000166893005,
+        "a": 1
+      },
+      "file": "cli-smoke-d239ffc0-60146fc5d76a.mode-1-e6b190f6cd6f.tokens.json"
+    },
+    {
+      "variableId": "VariableID:2:4",
+      "key": "62a4fc4504aa0cede89ffc5deaa46ee81a7c7cf5",
+      "name": "space/content",
+      "collectionId": "VariableCollectionId:2:2",
+      "collectionName": "CLI Smoke d239ffc0",
+      "modeId": "2:0",
+      "modeName": "Mode 1",
+      "tokenPath": "c_cli-smoke-d239ffc0_60146fc5d76a.m_e6b190f6cd6f.t_space-content_fac152604470",
+      "cssName": "--c-cli-smoke-d239ffc0-60146fc5d76a--t-space-content-fac152604470",
+      "type": "FLOAT",
+      "status": "supported",
+      "originalValue": 24,
+      "file": "cli-smoke-d239ffc0-60146fc5d76a.mode-1-e6b190f6cd6f.tokens.json"
+    }
+  ]
+}

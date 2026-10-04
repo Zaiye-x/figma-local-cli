@@ -1,0 +1,28 @@
+{
+  "name": "figma-local-cli",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Local Agent → Figma Plugin API → versioned design assets",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Zaiye-x/figma-local-cli.git"
+  },
+  "homepage": "https://github.com/Zaiye-x/figma-local-cli#readme",
+  "bugs": "https://github.com/Zaiye-x/figma-local-cli/issues",
+  "bin": { "figma-local-cli": "./src/cli.js" },
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "build": "tsc --noEmit && node scripts/build.mjs",
+    "start": "node src/cli.js serve",
+    "doctor": "node src/cli.js doctor",
+    "install:global": "node scripts/install-global.mjs",
+    "test": "node --test test/*.test.js",
+    "check": "npm run build && npm test"
+  },
+  "devDependencies": {
+    "@figma/plugin-typings": "^1.117.0",
+    "esbuild": "^0.25.0",
+    "typescript": "^5.9.0"
+  }
+}

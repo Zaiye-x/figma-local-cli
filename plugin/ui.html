@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Figma Local CLI</title>
+  <style>
+    :root { color-scheme: light dark; font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 12px;
+      color: var(--figma-color-text,#242424); background: var(--figma-color-bg,#fff); }
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 24px; }
+    h1 { margin: 0 0 7px; font-size: 19px; letter-spacing: -.5px; font-weight: 650; }
+    p { margin: 0; line-height: 1.7; }
+    .muted { color: var(--figma-color-text-secondary,#666); }
+    .status { display: flex; align-items: center; gap: 8px; margin: 24px 0 18px; font-weight: 600; }
+    .dot { width: 7px; height: 7px; border-radius: 50%; background: #999; }
+    [data-state="connected"] .dot { background: #16a078; }
+    [data-state="error"] .dot { background: #d64b46; }
+    label { display: block; margin-bottom: 8px; font-weight: 600; }
+    input { width: 100%; padding: 10px 12px; border: 1px solid var(--figma-color-border,#ddd);
+      border-radius: 7px; background: var(--figma-color-bg,#fff); color: inherit; font: inherit; }
+    input:focus-visible, button:focus-visible { outline: 2px solid var(--figma-color-border-brand,#1678ed); outline-offset: 3px; }
+    .hint { margin: 8px 0 14px; font-size: 11px; }
+    button { border: 0; border-radius: 7px; padding: 11px; width: 100%; cursor: pointer;
+      color: var(--figma-color-text-onbrand,#fff); background: var(--figma-color-bg-brand,#1678ed); font: inherit; font-weight: 600; }
+    button:disabled { opacity: .45; cursor: default; }
+    #disconnect { color: inherit; background: var(--figma-color-bg-secondary,#f2f2f2); }
+    dl { padding-top: 18px; margin: 18px 0 0; border-top: 1px solid var(--figma-color-border,#eee); }
+    .row { display: flex; align-items: baseline; gap: 16px; margin-bottom: 10px; }
+    dt { color: var(--figma-color-text-secondary,#777); width: 42px; flex-shrink: 0; }
+    dd { margin: 0; overflow-wrap: anywhere; line-height: 1.5; }
+    #result { margin-top: 16px; font-size: 11px; overflow-wrap: anywhere; }
+    #error { color: var(--figma-color-text-danger,#bc3834); margin: 12px 0 0; overflow-wrap: anywhere; }
+    .footer { margin-top: 20px; font-size: 11px; }
+    code { font-family: ui-monospace, SFMono-Regular, monospace; font-size: 10px; }
+    [hidden] { display: none !important; }
+  </style>
+</head>
+<body>
+  <h1>Figma Local CLI</h1>
+  <p class="muted">让本地 Agent 连接当前设计文件。</p>
+  <div class="status" id="status" data-state="idle" role="status"><span class="dot"></span><span id="status-text">等待连接</span></div>
+  <div id="connect-form">
+    <label for="pair-code">本地连接码</label>
+    <input id="pair-code" type="password" placeholder="粘贴 CLI 复制的连接码" autocomplete="off" spellcheck="false" aria-describedby="pair-hint error">
+    <p class="hint muted" id="pair-hint">先启动服务，再运行 <code>figma-local-cli pair --copy</code>。</p>
+    <button id="connect" type="button">连接当前文件</button>
+  </div>
+  <button id="disconnect" type="button" hidden>断开连接</button>
+  <p id="error" role="alert" hidden></p>
+  <dl aria-label="当前设计上下文">
+    <div class="row"><dt>文件</dt><dd id="file-name">等待 Figma 提供</dd></div>
+    <div class="row"><dt>页面</dt><dd id="page-name">—</dd></div>
+    <div class="row"><dt>选区</dt><dd id="selection">—</dd></div>
+  </dl>
+  <p id="result" class="muted" aria-live="polite">连接后，在 CLI 中选择并绑定此页面。</p>
+  <p class="footer muted">保持插件打开。切换页面后需重新绑定。</p>
+  <script>
+    const $ = id => document.getElementById(id);
+    let meta, config, timer, connected = false, polling = false, pendingResult = null;
+    function state(name, text) {
+      $('status').dataset.state = name;
+      $('status-text').textContent = text;
+    }
+    function error(text = '') {
+      $('error').textContent = text;
+      $('error').hidden = !text;
+    }
+    function controls() {
+      $('connect-form').hidden = connected;
+      $('disconnect').hidden = !connected;
+      $('connect').disabled = false;
+    }
+    async function api(path, data) {
+      const response = await fetch(config.url + path, {
+        method: 'POST', headers: { 'Authorization': 'Bearer ' + config.token, 'Content-Type': 'application/json' },
+        body: JSON.stringify(data), signal: AbortSignal.timeout(7000)
+      });
+      const body = await response.json();
+      if (!response.ok) throw new Error(body.error || '连接失败');
+      return body;
+    }
+    async function poll() {
+      if (!connected || polling) return;
+      polling = true;
+      try {
+        if (pendingResult) {
+          await api('/plugin/result', { sessionId: meta.sessionId, ...pendingResult });
+          $('result').textContent = pendingResult.status === 'succeeded'
+            ? '已完成 · ' + pendingResult.jobId : '任务失败 · ' + pendingResult.error;
+          pendingResult = null;
+        }
+        const response = await api('/plugin/poll', { sessionId: meta.sessionId, meta });
+        if (response.instanceId !== config.instanceId) throw new Error('服务已重启，请重新复制连接码。');
+        state('connected', '已连接到本地 Agent');
+        if (response.job) {
+          $('result').textContent = '正在执行 · ' + response.job.operation + ' · ' + response.job.id;
+          parent.postMessage({ pluginMessage: { type: 'job', job: response.job } }, '*');
+        }
+      } catch (e) {
+        connected = false;
+        state('error', '连接已中断');
+        error(e.message + ' 请检查本地服务后重新连接；任务不会自动重放。');
+        controls();
+      } finally {
+        polling = false;
+        if (connected) timer = setTimeout(poll, 1000);
+      }
+    }
+    window.onmessage = event => {
+      // Figma's nested sandbox can deliver main-thread messages from the
+      // outer app, rather than the UI's immediate parent window.
+      if (event.source !== parent &&
+          !['https://www.figma.com', 'https://figma.com'].includes(event.origin)) return;
+      const message = event.data.pluginMessage;
+      if (!message) return;
+      if (message.type === 'context') {
+        meta = message.meta;
+        $('file-name').textContent = meta.fileName;
+        $('page-name').textContent = meta.pageName + ' · ' + meta.pageId;
+        $('selection').textContent = meta.selection.length + ' 个节点';
+      }
+      if (message.type === 'result') pendingResult = message;
+    };
+    $('connect').onclick = async () => {
+      error();
+      try {
+        const next = JSON.parse($('pair-code').value);
+        if (next.version !== 1 || next.url !== 'http://localhost:3055' ||
+            !/^[A-Za-z0-9_-]{43}$/.test(next.token) || typeof next.instanceId !== 'string') {
+          throw new Error('连接码格式不正确，请重新运行 pair --copy。');
+        }
+        if (!meta) throw new Error('尚未收到 Figma 上下文，请在 Figma 中运行此插件。');
+        if (pendingResult && config?.instanceId !== next.instanceId) {
+          throw new Error('存在未送达的任务结果。请关闭并重开插件、检查画布后再配对新服务。');
+        }
+        config = next;
+        connected = true;
+        clearTimeout(timer);
+        $('connect').disabled = true;
+        state('connecting', '正在连接…');
+        await poll();
+        controls();
+        if (connected) $('pair-code').value = '';
+      } catch (e) { error(e.message); state('error', '连接未完成'); controls(); }
+    };
+    $('pair-code').addEventListener('keydown', event => {
+      if (event.key === 'Enter') { event.preventDefault(); $('connect').click(); }
+    });
+    $('disconnect').onclick = () => {
+      connected = false;
+      clearTimeout(timer);
+      state('idle', '已断开');
+      controls();
+      $('result').textContent = '已停止领取新任务。正在执行的操作仍会完成。';
+    };
+    parent.postMessage({ pluginMessage: { type: 'context-request' } }, '*');
+  </script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+{
+  "purpose": "CLI smoke feasibility demonstration; not approved business UI",
+  "handoff": "/Users/bytedance/Desktop/byte-project/figma-local-cli/artifacts/real-20261004/handoff",
+  "capturedAt": "2026-10-04T09:27:56.481Z",
+  "source": {
+    "sessionId": "plugin-mutm9quy-7ue3945pis4-1n4tn71s56q",
+    "fileName": "Untitled",
+    "pageId": "0:1",
+    "pageName": "Page 1",
+    "selection": [
+      {
+        "id": "2:6",
+        "name": "01 · Start",
+        "type": "FRAME"
+      },
+      {
+        "id": "2:7",
+        "name": "02 · Complete",
+        "type": "FRAME"
+      },
+      {
+        "id": "2:12",
+        "name": "Button / Primary · d239ffc0",
+        "type": "COMPONENT"
+      }
+    ]
+  },
+  "frameIds": [
+    "2:6",
+    "2:7"
+  ],
+  "instanceId": "2:14"
+}

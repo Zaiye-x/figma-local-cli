@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<title>模拟 Figma host · 仅用于插件 UI 验证</title>
+<style>body{margin:0;background:#ededed}iframe{border:0;width:380px;height:520px}</style>
+<iframe title="Figma Local CLI 测试界面" src="/plugin/ui.html" sandbox="allow-scripts"></iframe>
+<script>
+  const frame = document.querySelector('iframe');
+  const meta = { sessionId: 'ui-fixture-session', fileName: 'UI test · 模拟文件',
+    pageName: 'Golden screens', pageId: '0:1', selection: [{ id: '1:1', name: 'Fixture' }] };
+  window.addEventListener('message', event => {
+    if (event.source !== frame.contentWindow) return;
+    const message = event.data.pluginMessage;
+    if (message?.type === 'context-request') {
+      frame.contentWindow.postMessage({ pluginMessage: { type: 'context', meta } }, '*');
+    }
+    if (message?.type === 'job') {
+      const job = message.job;
+      frame.contentWindow.postMessage({ pluginMessage: { type: 'result', jobId: job.id,
+        status: job.operation === 'eval' ? 'failed' : 'succeeded',
+        ...(job.operation === 'eval' ? { error: '模拟脚本错误（UI 验证）' }
+          : { result: { source: meta, mockHost: true, nodes: [] } }) } }, '*');
+    }
+  });
+</script>
+</html>

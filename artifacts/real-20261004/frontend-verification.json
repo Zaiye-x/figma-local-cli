@@ -1,0 +1,57 @@
+{
+  "source": {
+    "sessionId": "plugin-mutm9quy-7ue3945pis4-1n4tn71s56q",
+    "fileName": "Untitled",
+    "pageId": "0:1",
+    "pageName": "Page 1",
+    "selection": [
+      {
+        "id": "2:6",
+        "name": "01 \u00b7 Start",
+        "type": "FRAME"
+      },
+      {
+        "id": "2:7",
+        "name": "02 \u00b7 Complete",
+        "type": "FRAME"
+      },
+      {
+        "id": "2:12",
+        "name": "Button / Primary \u00b7 d239ffc0",
+        "type": "COMPONENT"
+      }
+    ]
+  },
+  "capturedAt": "2026-10-04T09:27:56.481Z",
+  "metrics": {
+    "screen": {
+      "width": 360,
+      "height": 420
+    },
+    "button": {
+      "x": 24,
+      "y": 114,
+      "width": 105.625,
+      "height": 42
+    },
+    "background": "rgb(20, 97, 235)",
+    "padding": "24px"
+  },
+  "figmaButton": {
+    "x": 24,
+    "y": 114,
+    "width": 107,
+    "height": 42
+  },
+  "checks": [
+    "real handoff tokens and component reference",
+    "360x420 frame",
+    "pointer navigation",
+    "keyboard navigation and focus",
+    "browser back",
+    "deep link refresh",
+    "320px no overflow",
+    "44px touch target"
+  ],
+  "errors": []
+}

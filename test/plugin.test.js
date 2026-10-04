@@ -1,0 +1,47 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
+import vm from 'node:vm';
+import { transform } from 'esbuild';
+
+test('actual serializer preserves mixed properties, segments, instance refs and budget markers', async () => {
+  const source = await readFile(new URL('../plugin/serialize.ts', import.meta.url), 'utf8');
+  const { code } = await transform(source, { loader: 'ts', format: 'esm' });
+  const { serialize } = await import(`data:text/javascript;base64,${Buffer.from(code).toString('base64')}`);
+  const text = { id: '1:2', name: 'Mixed', type: 'TEXT', characters: 'AB', fontSize: Symbol('mixed'),
+    getStyledTextSegments: () => [{ start: 0, end: 1, fontSize: 12 }, { start: 1, end: 2, fontSize: 18 }] };
+  const instance = { id: '1:3', name: 'Instance', type: 'INSTANCE',
+    getMainComponentAsync: async () => ({ id: '2:1', key: 'key', name: 'Button', remote: false, parent: null }) };
+  const frame = { id: '1:1', name: 'Frame', type: 'FRAME', children: [text, instance] };
+  const full = await serialize([frame], 8, 10);
+  assert.deepEqual(full.nodes[0].children[0].fontSize, { mixed: true });
+  assert.equal(full.nodes[0].children[0].textSegments.length, 2);
+  assert.equal(full.nodes[0].children[1].mainComponent.id, '2:1');
+  assert.equal(full.completeness.truncated, false);
+  const limited = await serialize([frame], 8, 2);
+  assert.equal(limited.completeness.count, 2);
+  assert.deepEqual(limited.completeness.truncations[0], { nodeId: '1:1', reason: 'node-budget', omittedChildren: 1 });
+});
+
+test('built plugin rejects a changed page, returns errors and never repeats a script', async () => {
+  const messages = [];
+  const figma = { root: { name: 'Fixture' }, currentPage: { id: '0:1', name: 'Page', selection: [] },
+    ui: { postMessage: m => messages.push(m) }, showUI() {}, on() {}, counter: 0 };
+  const sandbox = vm.createContext({ figma, __html__: '', console });
+  vm.runInContext(await readFile(new URL('../dist/plugin/main.js', import.meta.url), 'utf8'), sandbox);
+  await figma.ui.onmessage({ type: 'context-request' });
+  const sessionId = messages.at(-1).meta.sessionId;
+  const job = { id: 'test-1', operation: 'eval', target: { sessionId, pageId: 'wrong-page' },
+    args: { script: 'figma.counter++; return figma.counter;' } };
+  await figma.ui.onmessage({ type: 'job', job });
+  assert.equal(figma.counter, 0);
+  assert.equal(messages.find(m => m.type === 'result').status, 'failed');
+  job.id = 'test-2'; job.target.pageId = '0:1';
+  await figma.ui.onmessage({ type: 'job', job });
+  await figma.ui.onmessage({ type: 'job', job });
+  assert.equal(figma.counter, 1);
+  job.id = 'test-3'; job.args.script = 'figma.counter++; throw new Error("partial");';
+  await figma.ui.onmessage({ type: 'job', job });
+  assert.equal(figma.counter, 2);
+  assert.match(messages.find(m => m.type === 'result' && m.jobId === 'test-3').error, /局部修改/);
+});

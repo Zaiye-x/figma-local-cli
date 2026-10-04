@@ -1,0 +1,31 @@
+{
+  "id": "d239ffc0-3cce-4432-a492-7bdb2ce18006",
+  "operation": "eval",
+  "args": {
+    "script": "// Executed by: node src/cli.js eval examples/smoke.js\n// Only creates new objects; does not delete or modify existing designs.\n// Each explicit invocation creates a new sample. Do not blindly retry a timeout.\nawait figma.loadFontAsync({ family: 'Inter', style: 'Regular' });\nawait figma.loadFontAsync({ family: 'Inter', style: 'Semi Bold' });\nconst suffix = context.jobId.slice(0, 8);\nconst collection = figma.variables.createVariableCollection(`CLI Smoke ${suffix}`);\nconst color = figma.variables.createVariable('color/action', collection, 'COLOR');\ncolor.setValueForMode(collection.defaultModeId, { r: 0.08, g: 0.38, b: 0.92, a: 1 });\nconst space = figma.variables.createVariable('space/content', collection, 'FLOAT');\nspace.setValueForMode(collection.defaultModeId, 24);\n\nfunction text(value, size = 16, weight = 'Regular') {\n  const node = figma.createText();\n  node.fontName = { family: 'Inter', style: weight };\n  node.fontSize = size;\n  node.characters = value;\n  return node;\n}\nfunction frame(name, x) {\n  const node = figma.createFrame();\n  node.name = name;\n  node.resize(360, 420);\n  node.x = x; node.y = 0;\n  node.layoutMode = 'VERTICAL';\n  node.primaryAxisSizingMode = 'FIXED';\n  node.counterAxisSizingMode = 'FIXED';\n  node.itemSpacing = 20;\n  node.paddingTop = node.paddingRight = node.paddingBottom = node.paddingLeft = 24;\n  node.setBoundVariable('paddingLeft', space);\n  node.cornerRadius = 16;\n  node.fills = [{ type: 'SOLID', color: { r: 0.97, g: 0.98, b: 1 } }];\n  return node;\n}\nconst board = figma.createSection();\nboard.name = `CLI Smoke · ${suffix}`;\nboard.x = Math.round(figma.viewport.center.x);\nboard.y = Math.round(figma.viewport.center.y);\nconst first = frame('01 · Start', 24);\nconst second = frame('02 · Complete', 408);\nboard.appendChild(first); board.appendChild(second);\nfirst.y = second.y = 64;\nfirst.appendChild(text('Local Agent → Figma', 26, 'Semi Bold'));\nfirst.appendChild(text('Native layers. Reusable assets.'));\nsecond.appendChild(text('Ready for handoff', 26, 'Semi Bold'));\nsecond.appendChild(text('Inspect structure and export tokens.'));\nconst button = figma.createComponent();\nbutton.name = `Button / Primary · ${suffix}`;\nbutton.layoutMode = 'HORIZONTAL';\nbutton.primaryAxisSizingMode = 'AUTO';\nbutton.counterAxisSizingMode = 'AUTO';\nbutton.paddingLeft = button.paddingRight = 20;\nbutton.paddingTop = button.paddingBottom = 12;\nbutton.cornerRadius = 8;\nbutton.fills = [figma.variables.setBoundVariableForPaint(\n  { type: 'SOLID', color: { r: 0.08, g: 0.38, b: 0.92 } }, 'color', color)];\nconst label = text('Continue', 15, 'Semi Bold');\nlabel.fills = [{ type: 'SOLID', color: { r: 1, g: 1, b: 1 } }];\nbutton.appendChild(label);\nboard.appendChild(button);\nbutton.x = 24; button.y = 520;\nconst instance = button.createInstance();\nfirst.appendChild(instance);\nawait instance.setReactionsAsync([{\n  trigger: { type: 'ON_CLICK' },\n  actions: [{ type: 'NODE', destinationId: second.id, navigation: 'NAVIGATE',\n    transition: null, preserveScrollPosition: false }]\n}]);\nboard.resizeWithoutConstraints(792, 640);\nfigma.currentPage.selection = [first, second, button];\nfigma.viewport.scrollAndZoomIntoView([board]);\nreturn { sectionId: board.id, frameIds: [first.id, second.id], componentId: button.id,\n  instanceId: instance.id, collectionId: collection.id, variableIds: [color.id, space.id] };\n"
+  },
+  "target": {
+    "instanceId": "d1af3fa2-6836-46c5-8a3f-df2d415cb9f7",
+    "sessionId": "plugin-mutm9quy-7ue3945pis4-1n4tn71s56q",
+    "pageId": "0:1"
+  },
+  "status": "succeeded",
+  "createdAt": 1791106053282,
+  "timeoutMs": 60000,
+  "startedAt": 1791106053340,
+  "result": {
+    "sectionId": "2:5",
+    "frameIds": [
+      "2:6",
+      "2:7"
+    ],
+    "componentId": "2:12",
+    "instanceId": "2:14",
+    "collectionId": "VariableCollectionId:2:2",
+    "variableIds": [
+      "VariableID:2:3",
+      "VariableID:2:4"
+    ]
+  },
+  "finishedAt": 1791106054345
+}

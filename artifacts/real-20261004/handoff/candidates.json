@@ -1,0 +1,240 @@
+[
+  {
+    "property": "effects",
+    "value": [],
+    "count": 10,
+    "nodeIds": [
+      "2:6",
+      "2:8",
+      "2:9",
+      "2:14",
+      "I2:14;2:13",
+      "2:7",
+      "2:10",
+      "2:11",
+      "2:12",
+      "2:13"
+    ],
+    "status": "needs-review"
+  },
+  {
+    "property": "lineHeight",
+    "value": {
+      "unit": "AUTO"
+    },
+    "count": 6,
+    "nodeIds": [
+      "2:8",
+      "2:9",
+      "I2:14;2:13",
+      "2:10",
+      "2:11",
+      "2:13"
+    ],
+    "status": "needs-review"
+  },
+  {
+    "property": "letterSpacing",
+    "value": {
+      "unit": "PERCENT",
+      "value": 0
+    },
+    "count": 6,
+    "nodeIds": [
+      "2:8",
+      "2:9",
+      "I2:14;2:13",
+      "2:10",
+      "2:11",
+      "2:13"
+    ],
+    "status": "needs-review"
+  },
+  {
+    "property": "fill",
+    "value": {
+      "r": 0,
+      "g": 0,
+      "b": 0,
+      "a": 1
+    },
+    "count": 4,
+    "nodeIds": [
+      "2:8",
+      "2:9",
+      "2:10",
+      "2:11"
+    ],
+    "status": "needs-review"
+  },
+  {
+    "property": "itemSpacing",
+    "value": 20,
+    "count": 2,
+    "nodeIds": [
+      "2:6",
+      "2:7"
+    ],
+    "status": "needs-review"
+  },
+  {
+    "property": "paddingTop",
+    "value": 24,
+    "count": 2,
+    "nodeIds": [
+      "2:6",
+      "2:7"
+    ],
+    "status": "needs-review"
+  },
+  {
+    "property": "paddingRight",
+    "value": 24,
+    "count": 2,
+    "nodeIds": [
+      "2:6",
+      "2:7"
+    ],
+    "status": "needs-review"
+  },
+  {
+    "property": "paddingBottom",
+    "value": 24,
+    "count": 2,
+    "nodeIds": [
+      "2:6",
+      "2:7"
+    ],
+    "status": "needs-review"
+  },
+  {
+    "property": "cornerRadius",
+    "value": 16,
+    "count": 2,
+    "nodeIds": [
+      "2:6",
+      "2:7"
+    ],
+    "status": "needs-review"
+  },
+  {
+    "property": "fill",
+    "value": {
+      "r": 0.9700000286102295,
+      "g": 0.9800000190734863,
+      "b": 1,
+      "a": 1
+    },
+    "count": 2,
+    "nodeIds": [
+      "2:6",
+      "2:7"
+    ],
+    "status": "needs-review"
+  },
+  {
+    "property": "fontSize",
+    "value": 26,
+    "count": 2,
+    "nodeIds": [
+      "2:8",
+      "2:10"
+    ],
+    "status": "needs-review"
+  },
+  {
+    "property": "fontSize",
+    "value": 16,
+    "count": 2,
+    "nodeIds": [
+      "2:9",
+      "2:11"
+    ],
+    "status": "needs-review"
+  },
+  {
+    "property": "itemSpacing",
+    "value": 0,
+    "count": 2,
+    "nodeIds": [
+      "2:14",
+      "2:12"
+    ],
+    "status": "needs-review"
+  },
+  {
+    "property": "paddingTop",
+    "value": 12,
+    "count": 2,
+    "nodeIds": [
+      "2:14",
+      "2:12"
+    ],
+    "status": "needs-review"
+  },
+  {
+    "property": "paddingRight",
+    "value": 20,
+    "count": 2,
+    "nodeIds": [
+      "2:14",
+      "2:12"
+    ],
+    "status": "needs-review"
+  },
+  {
+    "property": "paddingBottom",
+    "value": 12,
+    "count": 2,
+    "nodeIds": [
+      "2:14",
+      "2:12"
+    ],
+    "status": "needs-review"
+  },
+  {
+    "property": "paddingLeft",
+    "value": 20,
+    "count": 2,
+    "nodeIds": [
+      "2:14",
+      "2:12"
+    ],
+    "status": "needs-review"
+  },
+  {
+    "property": "cornerRadius",
+    "value": 8,
+    "count": 2,
+    "nodeIds": [
+      "2:14",
+      "2:12"
+    ],
+    "status": "needs-review"
+  },
+  {
+    "property": "fontSize",
+    "value": 15,
+    "count": 2,
+    "nodeIds": [
+      "I2:14;2:13",
+      "2:13"
+    ],
+    "status": "needs-review"
+  },
+  {
+    "property": "fill",
+    "value": {
+      "r": 1,
+      "g": 1,
+      "b": 1,
+      "a": 1
+    },
+    "count": 2,
+    "nodeIds": [
+      "I2:14;2:13",
+      "2:13"
+    ],
+    "status": "needs-review"
+  }
+]

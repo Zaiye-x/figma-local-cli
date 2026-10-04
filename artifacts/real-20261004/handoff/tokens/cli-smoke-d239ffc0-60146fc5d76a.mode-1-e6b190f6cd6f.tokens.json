@@ -1,0 +1,43 @@
+{
+  "$extensions": {
+    "figma-local": {
+      "collectionId": "VariableCollectionId:2:2",
+      "modeId": "2:0",
+      "dependencyModes": {}
+    }
+  },
+  "c_cli-smoke-d239ffc0_60146fc5d76a": {
+    "m_e6b190f6cd6f": {
+      "t_color-action_e22239b9a3c7": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "srgb",
+          "components": [
+            0.07999999821186066,
+            0.3799999952316284,
+            0.9200000166893005
+          ],
+          "alpha": 1
+        },
+        "$extensions": {
+          "figma-local": {
+            "variableId": "VariableID:2:3",
+            "collectionId": "VariableCollectionId:2:2",
+            "modeId": "2:0"
+          }
+        }
+      },
+      "t_space-content_fac152604470": {
+        "$type": "number",
+        "$value": 24,
+        "$extensions": {
+          "figma-local": {
+            "variableId": "VariableID:2:4",
+            "collectionId": "VariableCollectionId:2:2",
+            "modeId": "2:0"
+          }
+        }
+      }
+    }
+  }
+}
