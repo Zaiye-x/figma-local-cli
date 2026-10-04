@@ -4,16 +4,30 @@
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-10-05
+
+向后兼容的功能版本。
+
 ### Added
 
 - `scaffold --config <file>` 第一阶段：严格配置 Schema、跨 Page 只读上下文和确定性项目骨架计划。
 - 三 Page 与显式单 Page 模式、空白 `Page 1` 采用、`--adopt-page`、Starter Page 上限和名称冲突检查。
 - Scaffold Plugin Data 归属、旧 Schema 迁移阻断和重复执行幂等规划。
+- 插件面板支持折叠与展开；折叠状态保留连接状态、任务轮询和结果反馈。
+- README 增加工作流程、插件连接、真实 Figma Prototype 和前端交接图片。
 
 ### Safety
 
 - Scaffold 默认只生成计划；`--apply` 明确拒绝，不执行真实 Figma 写入。
 - 同名未归属对象、跨项目对象、非显式非空 Page 和冲突计划均不可执行。
+- 插件面板折叠不会中断正在执行的操作，也不会自动重放任务。
+
+### Validation
+
+- TypeScript 与 Figma Plugin API typings 构建通过。
+- 27 项 Node 自动测试通过。
+- 插件模拟 host 回归覆盖连接、折叠/展开、隐藏状态轮询、错误状态和深色主题。
+- 真实 Figma Free Draft 的既有创建、读回、Prototype 和 Handoff 验证证据保持有效。
 
 ## [0.1.0] - 2026-10-04
 
