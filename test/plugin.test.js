@@ -25,10 +25,15 @@ test('actual serializer preserves mixed properties, segments, instance refs and 
 
 test('built plugin rejects a changed page, returns errors and never repeats a script', async () => {
   const messages = [];
+  const resizes = [];
   const figma = { root: { name: 'Fixture' }, currentPage: { id: '0:1', name: 'Page', selection: [] },
-    ui: { postMessage: m => messages.push(m) }, showUI() {}, on() {}, counter: 0 };
+    ui: { postMessage: m => messages.push(m), resize: (width, height) => resizes.push({ width, height }) },
+    showUI() {}, on() {}, counter: 0 };
   const sandbox = vm.createContext({ figma, __html__: '', console });
   vm.runInContext(await readFile(new URL('../dist/plugin/main.js', import.meta.url), 'utf8'), sandbox);
+  await figma.ui.onmessage({ type: 'ui-resize', collapsed: true });
+  await figma.ui.onmessage({ type: 'ui-resize', collapsed: false });
+  assert.deepEqual(resizes, [{ width: 380, height: 104 }, { width: 380, height: 500 }]);
   await figma.ui.onmessage({ type: 'context-request' });
   const sessionId = messages.at(-1).meta.sessionId;
   const job = { id: 'test-1', operation: 'eval', target: { sessionId, pageId: 'wrong-page' },

@@ -1,10 +1,13 @@
 import { context, extractAssets, plain, serialize } from './serialize';
 import { readScaffoldContext } from './scaffold';
 
+const UI_WIDTH = 380;
+const UI_EXPANDED_HEIGHT = 500;
+const UI_COLLAPSED_HEIGHT = 104;
 const sessionId = `plugin-${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}-${Math.random().toString(36).slice(2)}`;
 let running = false;
 const executed = new Set<string>();
-figma.showUI(__html__, { width: 380, height: 500, themeColors: true });
+figma.showUI(__html__, { width: UI_WIDTH, height: UI_EXPANDED_HEIGHT, themeColors: true });
 const postContext = () => figma.ui.postMessage({ type: 'context', meta: context(sessionId) });
 figma.on('currentpagechange', postContext);
 figma.on('selectionchange', postContext);
@@ -63,6 +66,10 @@ async function execute(job: any) {
 }
 
 figma.ui.onmessage = async message => {
+  if (message.type === 'ui-resize') {
+    figma.ui.resize(UI_WIDTH, message.collapsed === true ? UI_COLLAPSED_HEIGHT : UI_EXPANDED_HEIGHT);
+    return;
+  }
   if (message.type === 'context-request') return postContext();
   if (message.type !== 'job') return;
   const job = message.job;

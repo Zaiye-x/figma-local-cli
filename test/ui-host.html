@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <meta charset="utf-8">
 <title>模拟 Figma host · 仅用于插件 UI 验证</title>
-<style>body{margin:0;background:#ededed}iframe{border:0;width:380px;height:520px}</style>
+<style>body{margin:0;background:#ededed}iframe{border:0;width:380px;height:500px}</style>
 <iframe title="Figma Local CLI 测试界面" src="/plugin/ui.html" sandbox="allow-scripts"></iframe>
 <script>
   const frame = document.querySelector('iframe');
@@ -13,6 +13,9 @@
     const message = event.data.pluginMessage;
     if (message?.type === 'context-request') {
       frame.contentWindow.postMessage({ pluginMessage: { type: 'context', meta } }, '*');
+    }
+    if (message?.type === 'ui-resize') {
+      frame.style.height = (message.collapsed ? 104 : 500) + 'px';
     }
     if (message?.type === 'job') {
       const job = message.job;
