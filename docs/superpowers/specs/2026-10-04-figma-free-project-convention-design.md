@@ -1,6 +1,6 @@
 # Figma Free Account Project Convention
 
-状态：待用户最终评审  
+状态：已批准；Scaffold 第一增量已实现
 日期：2026-10-04  
 适用工具：`figma-local-cli`  
 适用场景：个人 Free / Starter 账号，以本人和本地 Agent 为主要编辑者

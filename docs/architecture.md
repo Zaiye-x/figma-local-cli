@@ -34,6 +34,7 @@ CLI 通过 HTTP 提交任务，插件 UI 轮询本地桥接，通过 `postMessag
 | `sessions` | 列出当前连接的插件文件、页面、选区 |
 | `bind <session-id>` | 将该实时会话和页面绑定为当前项目目标 |
 | `inspect [node-id]` | 读取有深度/节点预算的结构，显式报告截断 |
+| `scaffold --config <file>` | 读取全部 Page 的规划上下文，生成确定性骨架计划；第一阶段不写入 |
 | `eval <script.js>` | 在绑定页面上下文执行异步脚本，必须等待结果 |
 | `screenshot <node-id> --out <file>` | 导出 PNG；可指定 SVG 格式作素材 |
 | `extract --out <directory>` | 读取选区（无选区时当前页）；导出结构、变量、样式、组件资料和 token |
@@ -41,6 +42,8 @@ CLI 通过 HTTP 提交任务，插件 UI 轮询本地桥接，通过 `postMessag
 | `job <id>` | 查询状态；不重放 |
 
 未连接时必须给出可操作错误；不创建假的 Figma 文件或成功结果。`extract` 不自动认可设计：输出是候选资产。`handoff` 不生成特定框架产品，不代替前端运行验收。
+
+`scaffold` 使用独立的只读操作读取全部 dynamic Page 的两层结构和约定 Plugin Data。配置 Schema 与规划器在 CLI 侧运行，不依赖 Figma 写入。计划会阻断同名未归属对象、跨项目归属、旧 Schema、非显式 Page 接管和 Starter Page 上限冲突。`--page-mode single` 只能显式选择，`--apply` 在第一阶段拒绝执行。
 
 ## 数据与导出
 
@@ -80,6 +83,6 @@ DTCG 基础类型不包含通用 string/boolean。通用 STRING/BOOLEAN 保存�
 
 ## 实现状态
 
-2026-10-04 已实现本基线内的 CLI 命令、服务、开发插件与交接导出；具体用法见 [README](../README.md)，实测证据见 [验证记录](verification.md)。14 项自动测试、模拟 host 浏览器回归、真实免费工作区 smoke 均通过。`examples/frontend-smoke` 进一步验证真实交接包 → HTML 前端 → Playwright 验收，不改变 CLI 只提供结构与资产交接的边界。
+2026-10-04 已实现本基线内的 CLI 命令、服务、开发插件与交接导出；具体用法见 [README](../README.md)，实测证据见 [验证记录](verification.md)。当前源码 27 项自动测试、模拟 host 浏览器回归、真实免费工作区 smoke 均通过。`examples/frontend-smoke` 进一步验证真实交接包 → HTML 前端 → Playwright 验收，不改变 CLI 只提供结构与资产交接的边界。
 
 实现细化：DTCG token 路径显式包含模式命名空间，跨 collection 别名记录目标默认模式，避免合并模式文件时混淆引用。迟到结果记入 `lateResult`，保留原 `indeterminate` 状态；重复回包不释放其他正在执行的任务。插件连接采用直接按钮事件，以适应受限 iframe。

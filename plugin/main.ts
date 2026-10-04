@@ -1,9 +1,13 @@
 import { context, extractAssets, plain, serialize } from './serialize';
+import { readScaffoldContext } from './scaffold';
 
+const UI_WIDTH = 380;
+const UI_EXPANDED_HEIGHT = 500;
+const UI_COLLAPSED_HEIGHT = 104;
 const sessionId = `plugin-${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}-${Math.random().toString(36).slice(2)}`;
 let running = false;
 const executed = new Set<string>();
-figma.showUI(__html__, { width: 380, height: 500, themeColors: true });
+figma.showUI(__html__, { width: UI_WIDTH, height: UI_EXPANDED_HEIGHT, themeColors: true });
 const postContext = () => figma.ui.postMessage({ type: 'context', meta: context(sessionId) });
 figma.on('currentpagechange', postContext);
 figma.on('selectionchange', postContext);
@@ -50,6 +54,9 @@ async function execute(job: any) {
     if (data.length > 14 * 1024 * 1024) throw new Error('导出超过 14MB，请降低 scale 或缩小节点');
     return { nodeId: node.id, name: node.name, format, base64: figma.base64Encode(data) };
   }
+  if (job.operation === 'scaffold-plan-context') {
+    return readScaffoldContext(context(sessionId));
+  }
   const depth = integer(args.depth, 8, 30), limit = integer(args.limit, 2000, 10000);
   const roots: BaseNode[] = args.nodeId ? [await nodeInPage(args.nodeId)]
     : figma.currentPage.selection.length ? [...figma.currentPage.selection] : [figma.currentPage];
@@ -59,6 +66,10 @@ async function execute(job: any) {
 }
 
 figma.ui.onmessage = async message => {
+  if (message.type === 'ui-resize') {
+    figma.ui.resize(UI_WIDTH, message.collapsed === true ? UI_COLLAPSED_HEIGHT : UI_EXPANDED_HEIGHT);
+    return;
+  }
   if (message.type === 'context-request') return postContext();
   if (message.type !== 'job') return;
   const job = message.job;

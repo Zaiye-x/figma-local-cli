@@ -2,6 +2,19 @@
 
 本项目使用语义化版本号。发布版本以 `package.json`、Git tag 和 GitHub Release 为准。
 
+## [Unreleased]
+
+### Added
+
+- `scaffold --config <file>` 第一阶段：严格配置 Schema、跨 Page 只读上下文和确定性项目骨架计划。
+- 三 Page 与显式单 Page 模式、空白 `Page 1` 采用、`--adopt-page`、Starter Page 上限和名称冲突检查。
+- Scaffold Plugin Data 归属、旧 Schema 迁移阻断和重复执行幂等规划。
+
+### Safety
+
+- Scaffold 默认只生成计划；`--apply` 明确拒绝，不执行真实 Figma 写入。
+- 同名未归属对象、跨项目对象、非显式非空 Page 和冲突计划均不可执行。
+
 ## [0.1.0] - 2026-10-04
 
 首个可用版本。

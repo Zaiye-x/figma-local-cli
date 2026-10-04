@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "project": {
+    "code": "PRJ",
+    "name": "Product Name",
+    "version": "v1"
+  },
+  "pageMode": "three",
+  "platforms": [
+    "desktop",
+    "mobile"
+  ],
+  "flows": [
+    {
+      "code": "F01",
+      "name": "Onboarding"
+    },
+    {
+      "code": "F02",
+      "name": "Core Task"
+    }
+  ]
+}

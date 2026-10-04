@@ -68,6 +68,20 @@ with sync_playwright() as p:
     plugin_frame = page.frames[1]
     dimensions = plugin_frame.evaluate("({scroll:document.body.scrollWidth, width:innerWidth})")
     assert dimensions["scroll"] <= dimensions["width"]
+    frame.get_by_role("button", name="折叠面板").click()
+    expect(frame.get_by_role("button", name="展开面板")).to_have_attribute("aria-expanded", "false")
+    expect(frame.locator("#panel-content")).to_be_hidden()
+    expect(frame.get_by_role("status")).to_contain_text("已连接到本地 Agent")
+    assert page.locator("iframe").evaluate("element => element.clientHeight") == 104
+    collapsed_result = cli("inspect")
+    assert collapsed_result["mockHost"] is True
+    expect(frame.locator("#result")).to_contain_text("已完成", timeout=10000)
+    page.screenshot(path=str(OUT / "04-collapsed.png"))
+    frame.get_by_role("button", name="展开面板").click()
+    expect(frame.get_by_role("button", name="折叠面板")).to_have_attribute("aria-expanded", "true")
+    expect(frame.locator("#panel-content")).to_be_visible()
+    assert page.locator("iframe").evaluate("element => element.clientHeight") == 500
+    page.wait_for_timeout(200)
     # Test-only theme injection, matching Figma theme variables.
     plugin_frame.add_style_tag(content=""":root {
       --figma-color-text:#f0f0f0;--figma-color-text-secondary:#aaa;
@@ -84,5 +98,5 @@ with sync_playwright() as p:
     page.screenshot(path=str(OUT / "05-auth-error.png"))
     assert not errors, errors
     browser.close()
-print("PASS: nested host, invalid code, pairing, real bridge/CLI dispatch, result feedback, disconnect, auth error, dark theme, no overflow.")
+print("PASS: nested host, invalid code, pairing, real bridge/CLI dispatch, collapse/expand, hidden-state polling, result feedback, disconnect, auth error, dark theme, no overflow.")
 print("Evidence: artifacts/ui/*.png — simulated Figma host; no real account verification.")

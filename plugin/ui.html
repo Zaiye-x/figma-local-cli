@@ -8,8 +8,10 @@
     :root { color-scheme: light dark; font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 12px;
       color: var(--figma-color-text,#242424); background: var(--figma-color-bg,#fff); }
     * { box-sizing: border-box; }
-    body { margin: 0; padding: 24px; }
-    h1 { margin: 0 0 7px; font-size: 19px; letter-spacing: -.5px; font-weight: 650; }
+    body { margin: 0; padding: 24px; overflow: hidden; }
+    .heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+    .heading-copy { min-width: 0; }
+    h1 { margin: 0 0 7px; font-size: 19px; letter-spacing: 0; font-weight: 650; }
     p { margin: 0; line-height: 1.7; }
     .muted { color: var(--figma-color-text-secondary,#666); }
     .status { display: flex; align-items: center; gap: 8px; margin: 24px 0 18px; font-weight: 600; }
@@ -23,6 +25,11 @@
     .hint { margin: 8px 0 14px; font-size: 11px; }
     button { border: 0; border-radius: 7px; padding: 11px; width: 100%; cursor: pointer;
       color: var(--figma-color-text-onbrand,#fff); background: var(--figma-color-bg-brand,#1678ed); font: inherit; font-weight: 600; }
+    .icon-button { display: grid; place-items: center; flex: 0 0 40px; width: 40px; height: 40px; padding: 0;
+      color: inherit; background: transparent; }
+    .icon-button:hover { background: var(--figma-color-bg-secondary,#f2f2f2); }
+    .icon-button:active { background: var(--figma-color-bg-tertiary,#e8e8e8); }
+    .icon-button svg { width: 18px; height: 18px; transition: transform 160ms ease; }
     button:disabled { opacity: .45; cursor: default; }
     #disconnect { color: inherit; background: var(--figma-color-bg-secondary,#f2f2f2); }
     dl { padding-top: 18px; margin: 18px 0 0; border-top: 1px solid var(--figma-color-border,#eee); }
@@ -33,31 +40,63 @@
     #error { color: var(--figma-color-text-danger,#bc3834); margin: 12px 0 0; overflow-wrap: anywhere; }
     .footer { margin-top: 20px; font-size: 11px; }
     code { font-family: ui-monospace, SFMono-Regular, monospace; font-size: 10px; }
+    body[data-collapsed="true"] { padding: 12px 16px; }
+    body[data-collapsed="true"] .heading { align-items: center; }
+    body[data-collapsed="true"] .subtitle { display: none; }
+    body[data-collapsed="true"] h1 { margin: 0; font-size: 15px; }
+    body[data-collapsed="true"] .status { margin: 8px 0 0; }
+    body[data-collapsed="true"] #collapse-toggle svg { transform: rotate(180deg); }
+    @media (prefers-reduced-motion: reduce) {
+      .icon-button svg { transition: none; }
+    }
     [hidden] { display: none !important; }
   </style>
 </head>
 <body>
-  <h1>Figma Local CLI</h1>
-  <p class="muted">让本地 Agent 连接当前设计文件。</p>
+  <header class="heading">
+    <div class="heading-copy">
+      <h1>Figma Local CLI</h1>
+      <p class="muted subtitle">让本地 Agent 连接当前设计文件。</p>
+    </div>
+    <button class="icon-button" id="collapse-toggle" type="button" aria-label="折叠面板"
+      aria-controls="panel-content" aria-expanded="true" title="折叠面板">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="m18 15-6-6-6 6"></path>
+      </svg>
+    </button>
+  </header>
   <div class="status" id="status" data-state="idle" role="status"><span class="dot"></span><span id="status-text">等待连接</span></div>
-  <div id="connect-form">
-    <label for="pair-code">本地连接码</label>
-    <input id="pair-code" type="password" placeholder="粘贴 CLI 复制的连接码" autocomplete="off" spellcheck="false" aria-describedby="pair-hint error">
-    <p class="hint muted" id="pair-hint">先启动服务，再运行 <code>figma-local-cli pair --copy</code>。</p>
-    <button id="connect" type="button">连接当前文件</button>
+  <div id="panel-content">
+    <div id="connect-form">
+      <label for="pair-code">本地连接码</label>
+      <input id="pair-code" type="password" placeholder="粘贴 CLI 复制的连接码" autocomplete="off" spellcheck="false" aria-describedby="pair-hint error">
+      <p class="hint muted" id="pair-hint">先启动服务，再运行 <code>figma-local-cli pair --copy</code>。</p>
+      <button id="connect" type="button">连接当前文件</button>
+    </div>
+    <button id="disconnect" type="button" hidden>断开连接</button>
+    <p id="error" role="alert" hidden></p>
+    <dl aria-label="当前设计上下文">
+      <div class="row"><dt>文件</dt><dd id="file-name">等待 Figma 提供</dd></div>
+      <div class="row"><dt>页面</dt><dd id="page-name">—</dd></div>
+      <div class="row"><dt>选区</dt><dd id="selection">—</dd></div>
+    </dl>
+    <p id="result" class="muted" aria-live="polite">连接后，在 CLI 中选择并绑定此页面。</p>
+    <p class="footer muted">保持插件打开。切换页面后需重新绑定。</p>
   </div>
-  <button id="disconnect" type="button" hidden>断开连接</button>
-  <p id="error" role="alert" hidden></p>
-  <dl aria-label="当前设计上下文">
-    <div class="row"><dt>文件</dt><dd id="file-name">等待 Figma 提供</dd></div>
-    <div class="row"><dt>页面</dt><dd id="page-name">—</dd></div>
-    <div class="row"><dt>选区</dt><dd id="selection">—</dd></div>
-  </dl>
-  <p id="result" class="muted" aria-live="polite">连接后，在 CLI 中选择并绑定此页面。</p>
-  <p class="footer muted">保持插件打开。切换页面后需重新绑定。</p>
   <script>
     const $ = id => document.getElementById(id);
-    let meta, config, timer, connected = false, polling = false, pendingResult = null;
+    let meta, config, timer, connected = false, polling = false, pendingResult = null, collapsed = false;
+    function setCollapsed(next) {
+      collapsed = next;
+      document.body.dataset.collapsed = String(collapsed);
+      $('panel-content').hidden = collapsed;
+      $('collapse-toggle').setAttribute('aria-expanded', String(!collapsed));
+      const label = collapsed ? '展开面板' : '折叠面板';
+      $('collapse-toggle').setAttribute('aria-label', label);
+      $('collapse-toggle').title = label;
+      parent.postMessage({ pluginMessage: { type: 'ui-resize', collapsed } }, '*');
+    }
     function state(name, text) {
       $('status').dataset.state = name;
       $('status-text').textContent = text;
@@ -154,6 +193,7 @@
       controls();
       $('result').textContent = '已停止领取新任务。正在执行的操作仍会完成。';
     };
+    $('collapse-toggle').onclick = () => setCollapsed(!collapsed);
     parent.postMessage({ pluginMessage: { type: 'context-request' } }, '*');
   </script>
 </body>
