@@ -4,7 +4,7 @@
 
 **适用：macOS + Node.js 22+ + Figma 桌面端 + 有编辑权限的个人草稿。主路径不需要 PAT，不调用官方 MCP，不消耗 MCP 读取额度。**
 
-当前 Release：**`v0.1.0`**。已在真实 Free 工作区的个人草稿跑通闭环：创建原生页面、组件、实例、变量和可点击原型，读回结构，提取设计资产，再在本地实现并验收前端。构建、14 项自动测试和插件模拟 host 浏览器回归均通过。
+当前 Release：**`v0.1.0`**。已在真实 Free 工作区的个人草稿跑通闭环：创建原生页面、组件、实例、变量和可点击原型，读回结构，提取设计资产，再在本地实现并验收前端。当前源码的构建、27 项自动测试和插件模拟 host 浏览器回归均通过。
 
 | 能力 | 说明 |
 |---|---|
@@ -121,6 +121,40 @@ Free / Starter 账号建议采用固定三 Page 主文件：
 
 业务模块和用户流使用 Section，实际页面与状态使用 Frame，正式结构使用 Auto Layout，Group 不作为长期布局边界。完整规范见 [Figma Free Account Project Convention](docs/superpowers/specs/2026-10-04-figma-free-project-convention-design.md)。
 
+### 预览项目骨架
+
+第一阶段的 `scaffold` 只读取当前文件并生成计划，不写入 Figma。先完成 `sessions` 和 `bind`，再运行：
+
+```sh
+figma-local-cli scaffold --config examples/figma-project.json
+```
+
+配置格式：
+
+```json
+{
+  "schemaVersion": 1,
+  "project": {
+    "code": "PRJ",
+    "name": "Product Name",
+    "version": "v1"
+  },
+  "pageMode": "three",
+  "platforms": ["desktop", "mobile"],
+  "flows": [
+    { "code": "F01", "name": "Onboarding" },
+    { "code": "F02", "name": "Core Task" }
+  ]
+}
+```
+
+计划会列出当前文件、Page、选区、创建/重命名/采用/保留操作、Starter Page 上限、名称冲突和预计 Section 数量。无冲突时 `executable=true`；冲突时仍输出计划，但进程退出码为 `2`。
+
+- 默认只自动采用唯一、空白且名为 `Page 1` 的 Page。
+- 非空或无法唯一判断的 Page 必须显式指定 `--adopt-page <page-id>`。
+- `--page-mode single` 是显式单 Page 回退，不会在三 Page 失败后自动启用。
+- `--apply` 在第一阶段会直接拒绝；真实写入将在独立增量实现。
+
 本次真实 smoke 的前端可以直接查看，或启动本地预览：
 
 ```sh
@@ -171,6 +205,7 @@ token 路径包含 collection、mode 和 variable 标识，避免合并不同模
 | `serve` / `pair --copy` / `doctor` | 启动、配对、检查环境 |
 | `sessions` / `bind ID` | 核对并绑定目标文件页面 |
 | `inspect [ID]` | 有深度/数量预算的结构读取；默认选区，否则当前页 |
+| `scaffold --config FILE` | 只读当前文件并生成项目骨架计划；第一阶段不写入 |
 | `eval FILE` | 执行本地异步 Plugin API 脚本 |
 | `screenshot ID --out FILE` | PNG / SVG 导出；PNG 可设 `--scale` |
 | `extract --out DIR` | 导出候选资产 |

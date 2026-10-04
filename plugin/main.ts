@@ -1,4 +1,5 @@
 import { context, extractAssets, plain, serialize } from './serialize';
+import { readScaffoldContext } from './scaffold';
 
 const sessionId = `plugin-${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}-${Math.random().toString(36).slice(2)}`;
 let running = false;
@@ -49,6 +50,9 @@ async function execute(job: any) {
     const data = await node.exportAsync(settings);
     if (data.length > 14 * 1024 * 1024) throw new Error('导出超过 14MB，请降低 scale 或缩小节点');
     return { nodeId: node.id, name: node.name, format, base64: figma.base64Encode(data) };
+  }
+  if (job.operation === 'scaffold-plan-context') {
+    return readScaffoldContext(context(sessionId));
   }
   const depth = integer(args.depth, 8, 30), limit = integer(args.limit, 2000, 10000);
   const roots: BaseNode[] = args.nodeId ? [await nodeInPage(args.nodeId)]

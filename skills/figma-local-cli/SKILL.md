@@ -22,6 +22,8 @@ Figma URL 只用于定位文件和 `node-id`，不能替代实时插件会话，
 ## 设计与写入
 
 - 没有具体业务需求时不要擅自设计产品。先明确用户旅程、页面、状态和验收标准。
+- 创建 Free / Starter 项目结构前，先运行 `scaffold --config <file>` 查看只读计划。非空 Page 只能在用户核对 ID 后使用 `--adopt-page`；单 Page 回退必须显式使用 `--page-mode single`。
+- 当前 Scaffold 第一阶段不支持 `--apply`。不得把可执行计划描述成已经写入 Figma，也不得绕过该限制自动改用 `eval`。
 - 只把本地可信脚本交给 `figma-local-cli eval`。字体先加载；组件引用和原型使用支持 dynamic-page 的异步 API。
 - 修改已有页面前先读取目标。首次接入或能力验证只创建独立 smoke Section。
 - 任务 ID 在 stderr，JSON 在 stdout。失败、网络错误或 `indeterminate` 后先运行 `figma-local-cli job <id>` 并检查画布，禁止自动重放写入。

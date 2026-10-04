@@ -105,3 +105,21 @@ test('job/request budgets are enforced', async t => {
   assert.equal((await f.submit('job-2')).status, 429);
   assert.equal((await f.call('/jobs', { x: 'x'.repeat(1000) })).status, 413);
 });
+
+test('scaffold context is an explicit read operation', async t => {
+  const f = await fixture(t);
+  await f.poll();
+  await f.bind();
+  const accepted = await f.call('/jobs', {
+    id: 'scaffold-context-1',
+    operation: 'scaffold-plan-context',
+    args: {}
+  });
+  assert.equal(accepted.status, 202);
+  const rejected = await f.call('/jobs', {
+    id: 'unknown-operation-1',
+    operation: 'unknown-read',
+    args: {}
+  });
+  assert.equal(rejected.status, 400);
+});

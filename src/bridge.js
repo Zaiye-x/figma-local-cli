@@ -6,7 +6,7 @@ const fail = (status, message) => Object.assign(new Error(message), { status });
 const same = (a, b) => typeof a === 'string' && Buffer.byteLength(a) === Buffer.byteLength(b) &&
   timingSafeEqual(Buffer.from(a), Buffer.from(b));
 const allowedOrigins = new Set(['null', 'https://www.figma.com', 'https://figma.com']);
-const operations = new Set(['inspect', 'eval', 'screenshot', 'extract']);
+const operations = new Set(['inspect', 'eval', 'screenshot', 'extract', 'scaffold-plan-context']);
 const identifier = value => typeof value === 'string' && /^[\w:.-]{1,128}$/.test(value);
 
 async function readBody(req, limit) {

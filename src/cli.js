@@ -7,6 +7,7 @@ import { createBridge } from './bridge.js';
 import { client } from './client.js';
 import { writeAssets } from './assets.js';
 import { resolveStateDir } from './state.js';
+import { planScaffold, validateScaffoldConfig } from './scaffold.js';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
 const print = value => console.log(JSON.stringify(value, null, 2));
@@ -17,20 +18,23 @@ const usage = `Figma Local CLI · 0.1.0
   sessions                      查看插件会话
   bind <session-id>             绑定会话与当前页面
   inspect [node-id]              读取结构
+  scaffold --config FILE        生成项目骨架计划（默认只生成计划）
   eval <script.js>               执行可信 Plugin API 脚本
   screenshot <node-id> --out X   导出 PNG（--format SVG --scale 1）
   extract --out DIR             导出候选设计资产
   handoff --out DIR             导出资产与画框预览
   job <id>                      查询任务，不重放
 通用参数：--state DIR；读取参数：--node ID --depth 8 --limit 2000
+scaffold：--page-mode three|single --adopt-page ID；第一阶段不支持 --apply
 执行参数：--timeout 60（秒，最多300）；handoff：--max-previews 6
 默认状态目录为 CLI 源码仓库的 .figma-local；可用 --state 或 FIGMA_LOCAL_STATE 覆盖。
 输出目录/文件必须不存在。`;
 
 function parse(args) {
   const options = {}, positionals = [];
-  const booleans = new Set(['copy', 'help']);
-  const valued = new Set(['state', 'out', 'node', 'depth', 'limit', 'timeout', 'format', 'scale', 'max-previews']);
+  const booleans = new Set(['copy', 'help', 'apply']);
+  const valued = new Set(['state', 'out', 'node', 'depth', 'limit', 'timeout', 'format', 'scale',
+    'max-previews', 'config', 'page-mode', 'adopt-page']);
   for (let i = 0; i < args.length; i++) {
     if (!args[i].startsWith('--')) { positionals.push(args[i]); continue; }
     const key = args[i].slice(2);
@@ -98,6 +102,27 @@ async function main() {
     } catch (error) { report.nextStep = error.message; }
     report.verificationNote = 'doctor 只检查当前环境与连接。真实创建/读回/截图的验收证据见 verificationRecord；不自动推断当前文件已验收。';
     return print(report);
+  }
+  if (command === 'scaffold') {
+    if (!o.config) throw new Error('请指定 --config');
+    if (o.apply) throw new Error('Scaffold 第一阶段仅支持计划，不支持 --apply，也不会写入 Figma。');
+    let raw;
+    try { raw = JSON.parse(await readFile(path.resolve(o.config), 'utf8')); }
+    catch (error) { throw new Error(`无法读取 Scaffold 配置: ${error.message}`); }
+    const config = validateScaffoldConfig(raw);
+    if (o['page-mode'] && !['three', 'single'].includes(o['page-mode'])) {
+      throw new Error('--page-mode 必须是 three 或 single');
+    }
+    const timeout = number(o.timeout, 60, 300) * 1000;
+    const c = await client(stateDir);
+    const scaffoldContext = await c.run('scaffold-plan-context', {}, timeout);
+    const plan = planScaffold(config, scaffoldContext, {
+      pageMode: o['page-mode'],
+      adoptPageId: o['adopt-page']
+    });
+    print(plan);
+    if (!plan.executable) process.exitCode = 2;
+    return;
   }
   const c = await client(stateDir);
   if (command === 'pair') {
