@@ -11,7 +11,7 @@ import { planScaffold, validateScaffoldConfig } from './scaffold.js';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
 const print = value => console.log(JSON.stringify(value, null, 2));
-const usage = `Figma Local CLI · 0.1.0
+const usage = `Figma Local CLI · 0.2.0
   serve                         启动本地服务（保持终端运行）
   pair --copy                   将连接码复制到剪贴板
   doctor                        检查构建产物、Figma 和连接
